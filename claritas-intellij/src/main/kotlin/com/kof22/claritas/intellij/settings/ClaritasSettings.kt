@@ -13,7 +13,7 @@
  *
  */
 
-package com.kof22.claritas.settings
+package com.kof22.claritas.intellij.settings
 
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.Service

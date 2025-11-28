@@ -13,7 +13,7 @@
  *
  */
 
-package com.kof22.claritas
+package com.kof22.claritas.intellij
 
 import com.intellij.DynamicBundle
 import org.jetbrains.annotations.NonNls

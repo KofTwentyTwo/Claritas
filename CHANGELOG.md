@@ -3,6 +3,11 @@
 # Claritas Changelog
 
 ## [Unreleased]
+### Changed
+- Restructured project into multi-module build (claritas-core + claritas-intellij)
+- Moved all existing code to claritas-intellij module
+- Updated package names to com.kof22.claritas.intellij for plugin code
+- Core business logic will reside in claritas-core (com.kof22.claritas)
 
 ## [0.0.2] - 2025-11-28 - Phase 0 POC
 ### Added

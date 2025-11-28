@@ -13,7 +13,7 @@
  *
  */
 
-package com.kof22.claritas
+package com.kof22.claritas.intellij
 
 import com.intellij.ide.highlighter.XmlFileType
 import com.intellij.openapi.components.service
@@ -21,7 +21,7 @@ import com.intellij.psi.xml.XmlFile
 import com.intellij.testFramework.TestDataPath
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.util.PsiErrorElementUtil
-import com.kof22.claritas.services.ClaritasService
+import com.kof22.claritas.intellij.services.ClaritasService
 
 @TestDataPath("\$CONTENT_ROOT/src/test/testData")
 class ClaritasTest : BasePlatformTestCase() {

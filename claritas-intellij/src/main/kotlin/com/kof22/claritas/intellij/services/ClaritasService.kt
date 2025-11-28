@@ -13,13 +13,13 @@
  *
  */
 
-package com.kof22.claritas.services
+package com.kof22.claritas.intellij.services
 
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
-import com.kof22.claritas.ClaritasBundle
+import com.kof22.claritas.intellij.ClaritasBundle
 
 /**
  * Claritas service for project-level operations.

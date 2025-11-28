@@ -18,10 +18,10 @@
    <resource-bundle>messages.Claritas</resource-bundle>
 
    <extensions defaultExtensionNs="com.intellij">
-      <postStartupActivity implementation="com.kof22.claritas.startup.ClaritasActivity"/>
+      <postStartupActivity implementation="com.kof22.claritas.intellij.startup.ClaritasActivity"/>
       <applicationConfigurable
               parentId="editor"
-              instance="com.kof22.claritas.settings.ClaritasSettingsConfigurable"
+              instance="com.kof22.claritas.intellij.settings.ClaritasSettingsConfigurable"
               id="claritas.settings"
               displayName="Claritas"/>
    </extensions>
@@ -32,7 +32,7 @@
          <add-to-group group-id="CodeMenu" anchor="last"/>
 
          <action id="Claritas.FormatCurrentLine"
-                 class="com.kof22.claritas.actions.FormatCurrentLineAction"
+                 class="com.kof22.claritas.intellij.actions.FormatCurrentLineAction"
                  text="Format Current Line (POC)"
                  description="POC action that replaces the current line with a Claritas-formatted version">
             <keyboard-shortcut keymap="$default" first-keystroke="meta F6"/>

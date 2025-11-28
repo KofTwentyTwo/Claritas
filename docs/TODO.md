@@ -432,6 +432,7 @@
 ---
 
 **Last Updated:** 2025-11-28  
-**Status:** Phase 0 COMPLETE ✅ - Ready for Phase 1  
+**Status:** Phase 0 COMPLETE ✅ | Multi-module restructure COMPLETE ✅  
+**Architecture:** claritas-core (business logic) + claritas-intellij (plugin wrapper)  
 **Next Actions:** Begin Phase 1 implementation (Comment Flowerboxing)
 

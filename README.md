@@ -44,6 +44,16 @@ public Order processOrder(Integer customerId, List<Item> items) throws Validatio
 
 **File Processing** – Apply formatting rules across entire files with a single command. All changes in one undo action.
 
+## Project Structure
+
+Claritas is built as a multi-module Gradle project:
+
+- **`claritas-core`** – Pure Kotlin library containing all business logic for comment and Javadoc formatting. Platform-independent and reusable in CLI tools, other IDEs, or standalone applications. No IntelliJ dependencies.
+
+- **`claritas-intellij`** – IntelliJ IDEA plugin module. Provides PSI integration, UI components, settings persistence, and menu actions. Acts as a thin adapter between IntelliJ Platform and the core library.
+
+This architecture enables the core formatting logic to be reused in future projects (CLI tools, other editors, etc.) while keeping the IntelliJ-specific code isolated.
+
 ## Configuration
 
 Settings available at application or project level (stored in `.idea/claritas.xml`):
@@ -78,10 +88,18 @@ See `docs/PHASE0_TESTING.md` for complete manual testing guide.
 ## Development
 
 ```bash
-./gradlew runIde        # Run plugin in sandbox IDE
-./gradlew test          # Execute test suite (3/3 passing)
-./gradlew buildPlugin   # Create distribution package
-./gradlew ktlintFormat  # Auto-format code (3-space indent)
+# Multi-module build commands
+./gradlew build                    # Build both modules
+./gradlew :claritas-core:test      # Test core library only
+./gradlew :claritas-intellij:test  # Test plugin module only
+
+# Plugin development
+./gradlew :claritas-intellij:runIde        # Run plugin in sandbox IDE
+./gradlew :claritas-intellij:buildPlugin   # Create distribution package
+
+# Code quality
+./gradlew ktlintFormat             # Auto-format all code (3-space indent)
+./gradlew test                     # Execute all tests
 ```
 
 Built on IntelliJ PSI APIs for safe, language-aware transformations. Three core services handle comment processing, Javadoc generation, and batch operations. See `docs/TECHNICAL_DESIGN.md` for architecture details and `docs/TODO.md` for implementation phases.

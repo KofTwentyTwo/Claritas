@@ -3,3 +3,6 @@ plugins {
 }
 
 rootProject.name = "Claritas"
+
+include("claritas-core")
+include("claritas-intellij")

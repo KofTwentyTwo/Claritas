@@ -13,7 +13,7 @@
  *
  */
 
-package com.kof22.claritas.actions
+package com.kof22.claritas.intellij.actions
 
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent

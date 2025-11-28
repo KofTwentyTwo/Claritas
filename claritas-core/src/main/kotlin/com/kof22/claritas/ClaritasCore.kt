@@ -13,18 +13,18 @@
  *
  */
 
-package com.kof22.claritas.startup
-
-import com.intellij.openapi.diagnostic.thisLogger
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.startup.ProjectActivity
+package com.kof22.claritas
 
 /**
- * Claritas startup activity.
- * Executes when a project is opened. Can be used for initialization tasks.
+ * Claritas Core Library
+ *
+ * This module contains all business logic for comment and Javadoc formatting.
+ * It is independent of IntelliJ Platform APIs and can be used in other contexts
+ * (CLI tools, other IDEs, etc.).
+ *
+ * This placeholder class will be replaced with actual implementation in Phase 1.
  */
-class ClaritasActivity : ProjectActivity {
-   override suspend fun execute(project: Project) {
-      thisLogger().info("Claritas plugin initialized for project: ${project.name}")
-   }
+object ClaritasCore {
+   const val VERSION = "0.0.2"
 }
+
