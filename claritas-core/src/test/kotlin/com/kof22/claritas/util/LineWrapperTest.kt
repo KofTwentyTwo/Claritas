@@ -31,22 +31,32 @@ class LineWrapperTest
       assertEquals("Short text", lines[0])
    }
 
+
+
    @Test
    fun testWrapLongText()
    {
       val text = "This is a longer piece of text that should be wrapped at word boundaries"
       val lines = LineWrapper.wrap(text, 30)
 
-      // Verify it's wrapped into multiple lines
+      /////////////////////////////////////////////
+      // Verify it's wrapped into multiple lines //
+      /////////////////////////////////////////////
       assertTrue(lines.size >= 3)
 
-      // Verify first line doesn't exceed max width
+      ////////////////////////////////////////////////
+      // Verify first line doesn't exceed max width //
+      ////////////////////////////////////////////////
       assertTrue(lines[0].length <= 30)
 
-      // Verify all content is preserved
+      /////////////////////////////////////
+      // Verify all content is preserved //
+      /////////////////////////////////////
       val rejoined = lines.joinToString(" ")
       assertEquals(text, rejoined)
    }
+
+
 
    @Test
    fun testWrapWithLongWord()
@@ -54,12 +64,16 @@ class LineWrapperTest
       val text = "Short word verylongwordthatexceedsthemaxwidth short"
       val lines = LineWrapper.wrap(text, 20)
 
-      // Long word gets its own line
+      /////////////////////////////////
+      // Long word gets its own line //
+      /////////////////////////////////
       assertEquals(3, lines.size)
       assertEquals("Short word", lines[0])
       assertEquals("verylongwordthatexceedsthemaxwidth", lines[1])
       assertEquals("short", lines[2])
    }
+
+
 
    @Test
    fun testWrapParagraphs()
@@ -77,4 +91,3 @@ class LineWrapperTest
       assertEquals("Second paragraph text here", lines[2])
    }
 }
-

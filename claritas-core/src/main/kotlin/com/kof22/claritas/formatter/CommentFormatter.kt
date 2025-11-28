@@ -45,7 +45,9 @@ class CommentFormatter(
     */
    fun format(comment: CommentBlock): FormattedComment
    {
-      // Step 1: Normalize text
+      ////////////////////////////
+      // Step 1: Normalize text //
+      ////////////////////////////
       val normalizedText = TextNormalizer.normalize(
          comment.rawText,
          comment.preserveParagraphs
@@ -53,7 +55,9 @@ class CommentFormatter(
 
       if (normalizedText.isEmpty())
       {
-         // Empty comment - return minimal flowerbox
+         //////////////////////////////////////////////
+         // Empty comment - return minimal flowerbox //
+         //////////////////////////////////////////////
          val emptyFormatted = BorderRenderer.render(emptyList(), style)
          return FormattedComment(
             formattedText = emptyFormatted,
@@ -62,26 +66,35 @@ class CommentFormatter(
          )
       }
 
-      // Step 2: Split into paragraphs
+      ///////////////////////////////////
+      // Step 2: Split into paragraphs //
+      ///////////////////////////////////
       val paragraphs = TextNormalizer.splitIntoParagraphs(normalizedText)
 
-      // Step 3: Calculate content width and wrap lines
+      ////////////////////////////////////////////////////
+      // Step 3: Calculate content width and wrap lines //
+      ////////////////////////////////////////////////////
       val contentWidth = if (style.fixedWidth != null)
       {
          BorderRenderer.calculateContentWidth(style.fixedWidth, style)
-      }
-      else
+      } else
       {
-         // For dynamic width, use maxWidth for wrapping
+         //////////////////////////////////////////////////
+         // For dynamic width, use maxWidth for wrapping //
+         //////////////////////////////////////////////////
          BorderRenderer.calculateContentWidth(style.maxWidth, style)
       }
 
       val wrappedLines = LineWrapper.wrapParagraphs(paragraphs, contentWidth)
 
-      // Step 4: Render with borders
+      /////////////////////////////////
+      // Step 4: Render with borders //
+      /////////////////////////////////
       val formattedText = BorderRenderer.render(wrappedLines, style)
 
-      // Calculate actual width from the first line (top border)
+      /////////////////////////////////////////////////////////////
+      // Calculate actual width from the first line (top border) //
+      /////////////////////////////////////////////////////////////
       val actualWidth = formattedText.lines().firstOrNull()?.length
          ?: (style.fixedWidth ?: style.minWidth)
 
@@ -114,4 +127,3 @@ class CommentFormatter(
       return format(comment).formattedText
    }
 }
-

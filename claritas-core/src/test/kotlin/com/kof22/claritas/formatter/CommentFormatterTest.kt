@@ -19,7 +19,6 @@ import com.kof22.claritas.model.CommentBlock
 import com.kof22.claritas.model.CommentType
 import com.kof22.claritas.model.FlowerboxStyle
 import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class CommentFormatterTest
@@ -42,17 +41,23 @@ class CommentFormatterTest
 
       val result = formatter.format(comment)
 
-      // Verify structure
+      //////////////////////
+      // Verify structure //
+      //////////////////////
       val lines = result.formattedText.lines()
       assertTrue(lines.size >= 3) // Top border, content, bottom border
 
-      // Verify borders
+      ////////////////////
+      // Verify borders //
+      ////////////////////
       assertTrue(lines.first().startsWith("/**"))
       assertTrue(lines.first().endsWith("*/"))
       assertTrue(lines.last().startsWith("/*"))
       assertTrue(lines.last().endsWith("*/"))
 
-      // Verify content line has prefix
+      ////////////////////////////////////
+      // Verify content line has prefix //
+      ////////////////////////////////////
       assertTrue(lines[1].contains(" ** "))
       assertTrue(lines[1].contains("This is a test comment"))
    }
@@ -79,14 +84,21 @@ class CommentFormatterTest
 
       val result = formatter.format(comment)
 
-      // Debug output
+      //////////////////
+      // Debug output //
+      //////////////////
       println("Formatted text:")
       println(result.formattedText)
       println("Line count: ${result.lineCount}")
 
-      // Verify we have content
+      ////////////////////////////
+      // Verify we have content //
+      ////////////////////////////
       assertTrue(result.lineCount >= 3, "Expected at least 3 lines, got ${result.lineCount}")
-      // Content should be preserved (words may be rearranged due to wrapping)
+
+      ///////////////////////////////////////////////////////////////////////////
+      // Content should be preserved (words may be rearranged due to wrapping) //
+      ///////////////////////////////////////////////////////////////////////////
       assertTrue(result.formattedText.contains("longer") || result.formattedText.contains("comment"))
       assertTrue(result.formattedText.contains("multiple") || result.formattedText.contains("lines"))
    }
@@ -124,9 +136,10 @@ class CommentFormatterTest
 
       val result = formatter.format(comment)
 
-      // Dynamic width should adapt to content
+      ///////////////////////////////////////////
+      // Dynamic width should adapt to content //
+      ///////////////////////////////////////////
       assertTrue(result.actualWidth >= style.minWidth)
       assertTrue(result.actualWidth <= style.maxWidth)
    }
 }
-
