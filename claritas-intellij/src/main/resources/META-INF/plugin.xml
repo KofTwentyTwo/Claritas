@@ -31,20 +31,27 @@
       <group id="Claritas.CodeMenu" text="Claritas" description="Claritas comment formatting" popup="true">
          <add-to-group group-id="CodeMenu" anchor="last"/>
 
-         <action id="Claritas.FormatCurrentLine"
-                 class="com.kof22.claritas.intellij.actions.FormatCurrentLineAction"
-                 text="Format Current Line (POC)"
-                 description="POC action that replaces the current line with a Claritas-formatted version">
+         <action id="Claritas.ReformatComment"
+                 class="com.kof22.claritas.intellij.actions.ReformatCommentAction"
+                 text="Reformat Comment"
+                 description="Reformat the comment at caret position using flowerbox style">
             <keyboard-shortcut keymap="$default" first-keystroke="meta F6"/>
             <keyboard-shortcut keymap="Mac OS X" first-keystroke="meta F6"/>
             <keyboard-shortcut keymap="Mac OS X 10.5+" first-keystroke="meta F6"/>
+         </action>
+
+         <!-- Keep POC action for comparison during development -->
+         <action id="Claritas.FormatCurrentLine"
+                 class="com.kof22.claritas.intellij.actions.FormatCurrentLineAction"
+                 text="Format Current Line (POC - Legacy)"
+                 description="POC action for testing (will be removed)">
          </action>
       </group>
 
       <!-- Also add to editor context menu -->
       <group id="Claritas.EditorPopup" text="Claritas" description="Claritas comment formatting actions" popup="true">
          <add-to-group group-id="EditorPopupMenu" anchor="last"/>
-         <reference ref="Claritas.FormatCurrentLine"/>
+         <reference ref="Claritas.ReformatComment"/>
       </group>
    </actions>
 </idea-plugin>

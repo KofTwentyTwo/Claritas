@@ -28,15 +28,13 @@ import com.kof22.claritas.intellij.ClaritasBundle
 @Service(Service.Level.PROJECT)
 class ClaritasService(
    private val project: Project
-)
-{
+) {
    init
    {
       thisLogger().info(ClaritasBundle.message("projectService", project.name))
    }
 
-   companion object
-   {
+   companion object {
       fun getInstance(project: Project): ClaritasService = project.service()
    }
 }
