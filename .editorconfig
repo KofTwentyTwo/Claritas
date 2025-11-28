@@ -1,0 +1,98 @@
+# EditorConfig for Claritas Plugin
+# https://editorconfig.org
+
+root = true
+
+# All files
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# Kotlin files
+[*.{kt,kts}]
+indent_style = space
+indent_size = 3
+continuation_indent_size = 3
+max_line_length = 120
+ij_kotlin_align_multiline_parameters = false
+
+# Code style
+ij_kotlin_code_style_defaults = KOTLIN_OFFICIAL
+
+# Imports
+ij_kotlin_name_count_to_use_star_import = 999
+ij_kotlin_name_count_to_use_star_import_for_members = 999
+ij_kotlin_packages_to_use_import_on_demand =
+
+# Blank lines
+ij_kotlin_blank_lines_after_class_header = 0
+ij_kotlin_blank_lines_around_block_when_branches = 0
+ij_kotlin_blank_lines_before_declaration_with_comment_or_annotation_on_separate_line = 1
+ij_kotlin_blank_lines_between_when_conditions = 0
+ij_kotlin_keep_blank_lines_in_code = 1
+ij_kotlin_keep_blank_lines_in_declarations = 1
+ij_kotlin_keep_blank_lines_before_right_brace = 0
+
+# Wrapping and braces
+ij_kotlin_method_parameters_wrap = off
+ij_kotlin_keep_line_breaks = true
+ij_kotlin_align_multiline_parameters_in_calls = false
+ij_kotlin_align_multiline_extends_list = false
+
+# Line breaks
+ij_kotlin_line_break_after_multiline_when_entry = true
+ij_kotlin_wrap_expression_body_functions = 1
+ij_kotlin_wrap_first_method_in_call_chain = false
+
+# Spacing
+ij_kotlin_space_after_comma = true
+ij_kotlin_space_after_type_colon = true
+ij_kotlin_space_before_comma = false
+ij_kotlin_space_before_type_colon = false
+ij_kotlin_space_around_range = false
+ij_kotlin_spaces_around_when_arrow = true
+
+# Other
+ij_kotlin_parameter_annotation_wrap = off
+ij_kotlin_variable_annotation_wrap = off
+ij_kotlin_allow_trailing_comma = false
+ij_kotlin_allow_trailing_comma_on_call_site = false
+
+# Java files (if any)
+[*.java]
+indent_style = space
+indent_size = 3
+continuation_indent_size = 3
+max_line_length = unlimited
+
+# Gradle files
+[*.gradle.kts]
+indent_style = space
+indent_size = 4
+continuation_indent_size = 4
+
+# XML files (plugin.xml, etc)
+[*.xml]
+indent_style = space
+indent_size = 3
+max_line_length = 120
+
+# Markdown files
+[*.md]
+indent_style = space
+indent_size = 2
+trim_trailing_whitespace = false
+max_line_length = 80
+
+# YAML files
+[*.{yml,yaml}]
+indent_style = space
+indent_size = 2
+
+# JSON files
+[*.json]
+indent_style = space
+indent_size = 2
+
