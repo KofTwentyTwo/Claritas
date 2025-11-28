@@ -16,52 +16,136 @@
 package com.kof22.claritas.intellij.settings
 
 import com.intellij.openapi.options.Configurable
+import com.intellij.ui.components.JBCheckBox
+import com.intellij.ui.components.JBTextField
+import com.intellij.util.ui.FormBuilder
 import java.awt.BorderLayout
-import javax.swing.JCheckBox
+import javax.swing.ButtonGroup
 import javax.swing.JComponent
 import javax.swing.JPanel
+import javax.swing.JRadioButton
 
 /**
  * Claritas settings UI.
  *
- * This is a simple POC version with minimal UI.
- * Will be expanded in Phase 2 to include tabbed interface with all options.
+ * Provides configuration for:
+ * - Enable/disable plugin
+ * - Rebalancing behavior
+ * - Maximum line length
+ * - Comment block style
  */
 class ClaritasSettingsConfigurable : Configurable {
-   private var settingsPanel: JPanel? = null
-   private var enableClaritasCheckbox: JCheckBox? = null
+   private var mainPanel: JPanel? = null
+   private var enableClaritasCheckbox: JBCheckBox? = null
+   private var rebalanceBlocksCheckbox: JBCheckBox? = null
+   private var maxLineLengthField: JBTextField? = null
+   private var javadocStyleRadio: JRadioButton? = null
+   private var blockStyleRadio: JRadioButton? = null
 
    override fun getDisplayName(): String = "Claritas"
 
    override fun createComponent(): JComponent {
-      val panel = JPanel(BorderLayout())
-      val checkbox = JCheckBox("Enable Claritas Plugin")
+      // /////////////////////////////////////////
+      // Create UI components                  //
+      // /////////////////////////////////////////
+      val enableCheckbox = JBCheckBox("Enable Claritas Plugin")
+      val rebalanceCheckbox = JBCheckBox("Rebalance Blocks (rewrap long lines)")
+      val maxLengthField = JBTextField(10)
+      val javadocRadio = JRadioButton("Javadoc Style (/** ... */)")
+      val blockRadio = JRadioButton("Block Style (/* ... */)")
 
-      panel.add(checkbox, BorderLayout.NORTH)
+      // /////////////////////////////////////////
+      // Group radio buttons                   //
+      // /////////////////////////////////////////
+      val styleGroup = ButtonGroup()
+      styleGroup.add(javadocRadio)
+      styleGroup.add(blockRadio)
 
-      settingsPanel = panel
-      enableClaritasCheckbox = checkbox
+      // /////////////////////////////////////////
+      // Create style panel                    //
+      // /////////////////////////////////////////
+      val stylePanel = JPanel(BorderLayout())
+      val styleSubPanel = JPanel()
+      styleSubPanel.layout = java.awt.FlowLayout(java.awt.FlowLayout.LEFT)
+      styleSubPanel.add(javadocRadio)
+      styleSubPanel.add(blockRadio)
+      stylePanel.add(styleSubPanel, BorderLayout.WEST)
+
+      // /////////////////////////////////////////
+      // Build form layout                     //
+      // /////////////////////////////////////////
+      val panel =
+         FormBuilder
+            .createFormBuilder()
+            .addComponent(enableCheckbox)
+            .addSeparator()
+            .addComponent(rebalanceCheckbox)
+            .addLabeledComponent(
+               "Max Line Length:",
+               maxLengthField
+            ).addSeparator()
+            .addComponent(stylePanel)
+            .addComponentFillVertically(JPanel(), 0)
+            .panel
+
+      // /////////////////////////////////////////
+      // Store references                      //
+      // /////////////////////////////////////////
+      mainPanel = panel
+      enableClaritasCheckbox = enableCheckbox
+      rebalanceBlocksCheckbox = rebalanceCheckbox
+      maxLineLengthField = maxLengthField
+      javadocStyleRadio = javadocRadio
+      blockStyleRadio = blockRadio
 
       return panel
    }
 
    override fun isModified(): Boolean {
       val settings = ClaritasSettings.getInstance()
-      return enableClaritasCheckbox?.isSelected != settings.state.enableClaritas
+      val state = settings.state
+
+      return enableClaritasCheckbox?.isSelected != state.enableClaritas ||
+         rebalanceBlocksCheckbox?.isSelected != state.rebalanceBlocks ||
+         maxLineLengthField?.text?.toIntOrNull() != state.maxLineLength ||
+         javadocStyleRadio?.isSelected != (state.commentBlockStyle == ClaritasSettings.CommentBlockStyle.JAVADOC)
    }
 
    override fun apply() {
       val settings = ClaritasSettings.getInstance()
-      settings.state.enableClaritas = enableClaritasCheckbox?.isSelected ?: true
+      val state = settings.state
+
+      state.enableClaritas = enableClaritasCheckbox?.isSelected ?: true
+      state.rebalanceBlocks = rebalanceBlocksCheckbox?.isSelected ?: true
+      state.maxLineLength = maxLineLengthField?.text?.toIntOrNull() ?: 70
+      state.commentBlockStyle =
+         if (javadocStyleRadio?.isSelected == true) {
+            ClaritasSettings.CommentBlockStyle.JAVADOC
+         } else {
+            ClaritasSettings.CommentBlockStyle.BLOCK
+         }
    }
 
    override fun reset() {
       val settings = ClaritasSettings.getInstance()
-      enableClaritasCheckbox?.isSelected = settings.state.enableClaritas
+      val state = settings.state
+
+      enableClaritasCheckbox?.isSelected = state.enableClaritas
+      rebalanceBlocksCheckbox?.isSelected = state.rebalanceBlocks
+      maxLineLengthField?.text = state.maxLineLength.toString()
+
+      when (state.commentBlockStyle) {
+         ClaritasSettings.CommentBlockStyle.JAVADOC -> javadocStyleRadio?.isSelected = true
+         ClaritasSettings.CommentBlockStyle.BLOCK -> blockStyleRadio?.isSelected = true
+      }
    }
 
    override fun disposeUIResources() {
-      settingsPanel = null
+      mainPanel = null
       enableClaritasCheckbox = null
+      rebalanceBlocksCheckbox = null
+      maxLineLengthField = null
+      javadocStyleRadio = null
+      blockStyleRadio = null
    }
 }

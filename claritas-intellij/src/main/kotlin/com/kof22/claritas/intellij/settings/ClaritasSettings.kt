@@ -34,8 +34,16 @@ import com.intellij.openapi.components.service
 @Service(Service.Level.APP)
 class ClaritasSettings : PersistentStateComponent<ClaritasSettings.State> {
    data class State(
-      var enableClaritas: Boolean = true
+      var enableClaritas: Boolean = true,
+      var rebalanceBlocks: Boolean = true,
+      var maxLineLength: Int = 70,
+      var commentBlockStyle: CommentBlockStyle = CommentBlockStyle.JAVADOC
    )
+
+   enum class CommentBlockStyle {
+      JAVADOC, // /** ... */
+      BLOCK // /* ... */
+   }
 
    private var myState = State()
 

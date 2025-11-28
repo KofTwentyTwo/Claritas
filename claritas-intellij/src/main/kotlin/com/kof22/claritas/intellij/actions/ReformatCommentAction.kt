@@ -88,9 +88,10 @@ class ReformatCommentAction : AnAction() {
       val (commentBlock, replacementRange) = extraction
 
       // ////////////////////////////////////
-      // Get formatting style              //
+      // Get formatting style from settings//
       // ////////////////////////////////////
-      val style = determineStyle(commentBlock.type)
+      val settings = ClaritasSettings.getInstance()
+      val style = determineStyle(commentBlock.type, settings.state)
 
       // ////////////////////////////////////
       // Format the comment                //
@@ -139,19 +140,42 @@ class ReformatCommentAction : AnAction() {
    }
 
    /**
-    * Determine the appropriate style based on comment type.
+    * Determine the appropriate style based on comment type and settings.
     */
-   private fun determineStyle(type: CommentType): FlowerboxStyle =
-      when (type) {
-         CommentType.JAVADOC -> FlowerboxStyle.JAVADOC_DEFAULT
-         CommentType.INLINE -> FlowerboxStyle.INLINE_DEFAULT
+   private fun determineStyle(
+      type: CommentType,
+      settings: ClaritasSettings.State
+   ): FlowerboxStyle {
+      val useJavadocStyle = settings.commentBlockStyle == ClaritasSettings.CommentBlockStyle.JAVADOC
+      val maxWidth = settings.maxLineLength
+
+      return when (type) {
+         CommentType.JAVADOC ->
+            FlowerboxStyle(
+               borderChar = '*',
+               linePrefix = " ** ",
+               fixedWidth = maxWidth,
+               useJavadocStyle = true
+            )
+
+         CommentType.INLINE ->
+            FlowerboxStyle(
+               borderChar = '*',
+               linePrefix = " ** ",
+               fixedWidth = null, // Dynamic width
+               minWidth = 40,
+               maxWidth = maxWidth,
+               useJavadocStyle = useJavadocStyle
+            )
+
          CommentType.BLOCK,
          CommentType.LINE ->
             FlowerboxStyle(
                borderChar = '*',
                linePrefix = " ** ",
-               fixedWidth = 80,
-               useJavadocStyle = false
+               fixedWidth = maxWidth,
+               useJavadocStyle = useJavadocStyle
             )
       }
+   }
 }
