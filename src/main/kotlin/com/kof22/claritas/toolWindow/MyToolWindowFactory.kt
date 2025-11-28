@@ -1,4 +1,4 @@
-package com.github.koftwentytwo.claritas.toolWindow
+package com.kof22.claritas.toolWindow
 
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.thisLogger
@@ -8,8 +8,8 @@ import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBPanel
 import com.intellij.ui.content.ContentFactory
-import com.github.koftwentytwo.claritas.MyBundle
-import com.github.koftwentytwo.claritas.services.MyProjectService
+import com.kof22.claritas.MyBundle
+import com.kof22.claritas.services.MyProjectService
 import javax.swing.JButton
 
 

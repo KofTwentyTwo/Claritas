@@ -1,52 +1,37 @@
 # Claritas
 
-![Build](https://github.com/KofTwentyTwo/Claritas/workflows/Build/badge.svg)
-[![Version](https://img.shields.io/jetbrains/plugin/v/MARKETPLACE_ID.svg)](https://plugins.jetbrains.com/plugin/MARKETPLACE_ID)
-[![Downloads](https://img.shields.io/jetbrains/plugin/d/MARKETPLACE_ID.svg)](https://plugins.jetbrains.com/plugin/MARKETPLACE_ID)
-
-## Template ToDo list
-- [x] Create a new [IntelliJ Platform Plugin Template][template] project.
-- [ ] Get familiar with the [template documentation][template].
-- [ ] Adjust the [pluginGroup](./gradle.properties) and [pluginName](./gradle.properties), as well as the [id](./src/main/resources/META-INF/plugin.xml) and [sources package](./src/main/kotlin).
-- [ ] Adjust the plugin description in `README` (see [Tips][docs:plugin-description])
-- [ ] Review the [Legal Agreements](https://plugins.jetbrains.com/docs/marketplace/legal-agreements.html?from=IJPluginTemplate).
-- [ ] [Publish a plugin manually](https://plugins.jetbrains.com/docs/intellij/publishing-plugin.html?from=IJPluginTemplate) for the first time.
-- [ ] Set the `MARKETPLACE_ID` in the above README badges. You can obtain it once the plugin is published to JetBrains Marketplace.
-- [ ] Set the [Plugin Signing](https://plugins.jetbrains.com/docs/intellij/plugin-signing.html?from=IJPluginTemplate) related [secrets](https://github.com/JetBrains/intellij-platform-plugin-template#environment-variables).
-- [ ] Set the [Deployment Token](https://plugins.jetbrains.com/docs/marketplace/plugin-upload.html?from=IJPluginTemplate).
-- [ ] Click the <kbd>Watch</kbd> button on the top of the [IntelliJ Platform Plugin Template][template] to be notified about releases containing new features and fixes.
-- [ ] Configure the [CODECOV_TOKEN](https://docs.codecov.com/docs/quick-start) secret for automated test coverage reports on PRs
+**Claritas – Precision. Structure. Clarity. Your code—refined and illuminated.**
 
 <!-- Plugin description -->
-This Fancy IntelliJ Platform Plugin is going to be your implementation of the brilliant ideas that you have.
-
-This specific section is a source for the [plugin.xml](/src/main/resources/META-INF/plugin.xml) file which will be extracted by the [Gradle](/build.gradle.kts) during the build process.
-
-To keep everything working, do not remove `<!-- ... -->` sections. 
+Claritas is an IntelliJ plugin designed to bring discipline and refinement to your codebase. It enforces structural consistency, coding standards, and configuration correctness while providing in-editor insights that help you write cleaner and more expressive code. With customizable rules and intelligent analysis, Claritas becomes the guardian of clarity within your projects. Your code emerges polished, coherent, and illuminated—every time.
 <!-- Plugin description end -->
 
-## Installation
+## Features (planned)
 
-- Using the IDE built-in plugin system:
+- Enforce project-wide code style and structural rules
+- Validate configuration files (build scripts, YAML/JSON/XML, etc.)
+- Provide inline inspections and QuickFixes
+- Support custom rule sets per project or per team
+- Generate reports on style violations and structural drift
 
-  <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>Marketplace</kbd> > <kbd>Search for "Claritas"</kbd> >
-  <kbd>Install</kbd>
+## Getting Started
 
-- Using JetBrains Marketplace:
+1. Clone this repository:  
+   `git clone https://github.com/KofTwentyTwo/Claritas.git`
+2. Open it in IntelliJ IDEA.
+3. Run the plugin in a sandbox IDE:  
+   `./gradlew runIde`
+4. In the sandbox IDE, open a project and try **Claritas → Analyze File** (or whatever first action you define).
 
-  Go to [JetBrains Marketplace](https://plugins.jetbrains.com/plugin/MARKETPLACE_ID) and install it by clicking the <kbd>Install to ...</kbd> button in case your IDE is running.
+## Roadmap
 
-  You can also download the [latest release](https://plugins.jetbrains.com/plugin/MARKETPLACE_ID/versions) from JetBrains Marketplace and install it manually using
-  <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>⚙️</kbd> > <kbd>Install plugin from disk...</kbd>
-
-- Manually:
-
-  Download the [latest release](https://github.com/KofTwentyTwo/Claritas/releases/latest) and install it manually using
-  <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>⚙️</kbd> > <kbd>Install plugin from disk...</kbd>
-
+- v0.1 – Core prototype (single-file inspections, basic settings)
+- v0.2 – Project-level rule engine and configuration validation
+- v0.3 – Structural intelligence and dashboards
+- v0.4 – Team rule sharing and Git integration
+- v0.5 – AI-assisted rule suggestions and refactoring proposals
+- v1.0 – Public JetBrains Marketplace release
 
 ---
-Plugin based on the [IntelliJ Platform Plugin Template][template].
 
-[template]: https://github.com/JetBrains/intellij-platform-plugin-template
-[docs:plugin-description]: https://plugins.jetbrains.com/docs/intellij/plugin-user-experience.html#plugin-description-and-presentation
+Plugin based on the [IntelliJ Platform Plugin Template](https://github.com/JetBrains/intellij-platform-plugin-template).

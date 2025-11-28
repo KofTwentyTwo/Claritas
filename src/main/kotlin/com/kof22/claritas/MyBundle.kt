@@ -1,4 +1,4 @@
-package com.github.koftwentytwo.claritas
+package com.kof22.claritas
 
 import com.intellij.DynamicBundle
 import org.jetbrains.annotations.NonNls
