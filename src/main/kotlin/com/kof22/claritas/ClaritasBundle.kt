@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NonNls
 import org.jetbrains.annotations.PropertyKey
 
 @NonNls
-private const val BUNDLE = "messages.ClaritasBundle"
+private const val BUNDLE = "messages.Claritas"
 
 object ClaritasBundle : DynamicBundle(BUNDLE)
 {
