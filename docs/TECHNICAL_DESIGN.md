@@ -531,9 +531,16 @@ private fun buildJavadocFromSignature(method: PsiMethod): JavadocModel {
 ```kotlin
 private fun renderJavadoc(
    model: JavadocModel,
+   element: PsiElement,
    style: FlowerboxStyle,
    indentLevel: Int
 ): String {
+   // Field Javadocs use simple single-line format
+   if (element is PsiField) {
+      return renderFieldJavadoc(model, indentLevel)
+   }
+   
+   // Class/Method Javadocs use flowerbox style
    val lines = mutableListOf<String>()
    
    // Summary (always first, single line preferred)
@@ -545,13 +552,12 @@ private fun renderJavadoc(
       lines.addAll(model.description)
    }
    
-   // Parameters
+   // Parameters (left-aligned, no padding)
    if (model.params.isNotEmpty()) {
       if (lines.isNotEmpty()) lines.add("")
-      val maxParamLength = model.params.maxOf { it.name.length }
       for (param in model.params) {
          val desc = param.description ?: ""
-         lines.add("@param ${param.name.padEnd(maxParamLength)} $desc".trim())
+         lines.add("@param ${param.name} $desc".trim())
       }
    }
    
@@ -571,6 +577,15 @@ private fun renderJavadoc(
    
    // Build flowerbox around these lines
    return buildFlowerbox(lines, style, indentLevel)
+}
+
+private fun renderFieldJavadoc(
+   model: JavadocModel,
+   indentLevel: Int
+): String {
+   val indent = " ".repeat(indentLevel)
+   val summary = model.summary ?: ""
+   return "$indent/** $summary */"
 }
 ```
 
@@ -665,13 +680,16 @@ fun processFile(psiFile: PsiFile, options: FileProcessingOptions): ProcessingRes
 
 ### 6.1 ClaritasSettings (Post-POC)
 
+**Architecture:** Hybrid settings (Application + Project level), following IntelliJ Code Style pattern.
+
+**Application-Level Settings:**
 ```kotlin
 @State(
    name = "ClaritasSettings",
    storages = [Storage("ClaritasSettings.xml")]
 )
 @Service(Service.Level.APP)
-class ClaritasSettings : PersistentStateComponent<ClaritasSettings.State> {
+class ClaritasApplicationSettings : PersistentStateComponent<ClaritasApplicationSettings.State> {
    
    data class State(
       // Flowerbox settings
@@ -707,23 +725,70 @@ class ClaritasSettings : PersistentStateComponent<ClaritasSettings.State> {
    }
    
    companion object {
-      fun getInstance(): ClaritasSettings = service()
+      fun getInstance(): ClaritasApplicationSettings = service()
+   }
+}
+
+**Project-Level Settings:**
+```kotlin
+@State(
+   name = "ClaritasProjectSettings",
+   storages = [Storage("claritas.xml")]
+)
+@Service(Service.Level.PROJECT)
+class ClaritasProjectSettings(val project: Project) : 
+   PersistentStateComponent<ClaritasProjectSettings.State> {
+   
+   data class State(
+      var useProjectSettings: Boolean = false,
+      var settings: ClaritasApplicationSettings.State? = null
+   )
+   
+   private var myState = State()
+   
+   override fun getState() = myState
+   override fun loadState(state: State) {
+      myState = state
+   }
+   
+   companion object {
+      fun getInstance(project: Project): ClaritasProjectSettings = 
+         project.service()
+   }
+}
+
+**Unified Settings Facade:**
+```kotlin
+object ClaritasSettings {
+   
+   fun getInstance(project: Project?): ClaritasApplicationSettings.State {
+      if (project != null) {
+         val projectSettings = ClaritasProjectSettings.getInstance(project)
+         if (projectSettings.state.useProjectSettings && projectSettings.state.settings != null) {
+            return projectSettings.state.settings!!
+         }
+      }
+      return ClaritasApplicationSettings.getInstance().state
    }
    
    // Convenience methods
-   fun getFlowerboxStyle() = FlowerboxStyle(
-      topBorderChar = myState.javadocTopBorderChar,
-      bottomBorderChar = myState.javadocTopBorderChar,
-      innerLinePrefix = myState.javadocInnerPrefix,
-      maxWidth = myState.javadocMaxWidth,
-      useJavadocStyle = myState.javadocUseJavadocStyle
-   )
+   fun getFlowerboxStyle(project: Project?) = getInstance(project).let { state ->
+      FlowerboxStyle(
+      topBorderChar = state.javadocTopBorderChar,
+      bottomBorderChar = state.javadocTopBorderChar,
+      innerLinePrefix = state.javadocInnerPrefix,
+      maxWidth = state.javadocMaxWidth,
+      useJavadocStyle = state.javadocUseJavadocStyle
+      )
+   }
    
-   fun getInlineCommentStyle() = InlineCommentStyle(
-      borderChar = myState.inlineCommentBorderChar,
-      rebalanceThreshold = myState.inlineCommentRebalanceThreshold,
-      dynamicWidth = myState.inlineCommentDynamicWidth
-   )
+   fun getInlineCommentStyle(project: Project?) = getInstance(project).let { state ->
+      InlineCommentStyle(
+         borderChar = state.inlineCommentBorderChar,
+         rebalanceThreshold = state.inlineCommentRebalanceThreshold,
+         dynamicWidth = state.inlineCommentDynamicWidth
+      )
+   }
 }
 ```
 
@@ -731,8 +796,13 @@ class ClaritasSettings : PersistentStateComponent<ClaritasSettings.State> {
 
 **ClaritasSettingsPanel.kt:**
 ```kotlin
-class ClaritasSettingsPanel : JPanel() {
+class ClaritasSettingsPanel(private val project: Project?) : JPanel() {
    private val tabbedPane = JBTabbedPane()
+   
+   // Project-level override controls (only shown for project settings)
+   private val useProjectSettingsCheckbox = JBCheckBox("Use project-specific settings")
+   private val copyFromAppButton = JButton("Copy from Application Settings")
+   private val resetToDefaultButton = JButton("Reset to Defaults")
    
    // Flowerbox tab
    private val javadocWidthField = JBIntSpinner(80, 60, 120)
@@ -751,6 +821,16 @@ class ClaritasSettingsPanel : JPanel() {
    init {
       layout = BorderLayout()
       
+      // Add project override controls if this is project settings
+      if (project != null) {
+         add(createProjectControlsPanel(), BorderLayout.NORTH)
+         
+         // Enable/disable all controls based on checkbox
+         useProjectSettingsCheckbox.addActionListener {
+            updateControlsEnabled()
+         }
+      }
+      
       tabbedPane.addTab("Flowerbox Style", createFlowerboxPanel())
       tabbedPane.addTab("Inline Comments", createInlineCommentsPanel())
       tabbedPane.addTab("Javadoc Behavior", createJavadocBehaviorPanel())
@@ -758,6 +838,48 @@ class ClaritasSettingsPanel : JPanel() {
       
       add(tabbedPane, BorderLayout.CENTER)
       add(createPreviewPanel(), BorderLayout.SOUTH)
+   }
+   
+   private fun createProjectControlsPanel(): JPanel {
+      val panel = JPanel(FlowLayout(FlowLayout.LEFT))
+      panel.border = IdeBorderFactory.createTitledBorder("Project Settings")
+      
+      panel.add(useProjectSettingsCheckbox)
+      panel.add(copyFromAppButton)
+      panel.add(resetToDefaultButton)
+      
+      copyFromAppButton.addActionListener {
+         copySettingsFromApplication()
+      }
+      
+      resetToDefaultButton.addActionListener {
+         resetToDefaults()
+      }
+      
+      return panel
+   }
+   
+   private fun updateControlsEnabled() {
+      val enabled = project == null || useProjectSettingsCheckbox.isSelected
+      // Enable/disable all controls in tabs
+      setComponentsEnabled(tabbedPane, enabled)
+   }
+   
+   private fun copySettingsFromApplication() {
+      val appSettings = ClaritasApplicationSettings.getInstance().state
+      loadSettings(appSettings)
+      Messages.showInfoMessage(
+         "Application settings copied to project",
+         "Claritas"
+      )
+   }
+   
+   private fun resetToDefaults() {
+      loadSettings(ClaritasApplicationSettings.State())
+      Messages.showInfoMessage(
+         "Settings reset to defaults",
+         "Claritas"
+      )
    }
    
    private fun createPreviewPanel(): JPanel {
@@ -1119,26 +1241,29 @@ try {
 
 ---
 
-## 11. Open Questions for Implementation
+## 11. Design Decisions - Open Questions RESOLVED
 
-1. **Alignment of @param names:** Should we pad all param names to align descriptions vertically?
-   ```java
-   @param id          the identifier
-   @param customerName the customer name
-   ```
-   vs
+1. **Alignment of @param names:** ✅ **DECISION: Left-aligned, no padding**
    ```java
    @param id the identifier
    @param customerName the customer name
    ```
+   Simple, clean formatting without artificial alignment.
 
-2. **Multiple consecutive line comments:** Should they always be treated as a single block, or only if no blank lines between them?
+2. **Multiple consecutive line comments:** ✅ **DECISION: Always treat as single block**
+   Consecutive `//` comments with no blank lines between them are always processed as one logical comment block.
 
-3. **Javadoc for fields:** Should field Javadocs also use flowerbox style, or simpler single-line format?
+3. **Javadoc for fields:** ✅ **DECISION: Simple single-line format**
+   Field Javadocs use standard single-line `/** ... */` format, not flowerbox style. Only class/method Javadocs get flowerbox treatment.
 
-4. **Undo granularity:** Should "Process File" be one undo action, or one undo per comment/Javadoc?
+4. **Undo granularity:** ✅ **DECISION: Single undo action**
+   "Process File" executes all transformations in one `WriteCommandAction`, allowing the user to undo everything with a single Cmd+Z.
 
-5. **Settings scope:** Application-level (all projects) or project-level (per project)?
+5. **Settings scope:** ✅ **DECISION: Hybrid (like IntelliJ Code Style)**
+   - Application-level defaults for all projects
+   - Project-level overrides stored in `.idea/claritas.xml` (can be committed to repo)
+   - UI includes "Copy to Project" / "Reset to Default" buttons
+   - Settings search path: Project → Application → Built-in defaults
 
 ---
 
