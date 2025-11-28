@@ -54,12 +54,34 @@ Settings available at application or project level (stored in `.idea/claritas.xm
 
 Live preview shows formatting results as you adjust settings.
 
+## Current Status
+
+**Version:** 0.0.2-POC  
+**Status:** Phase 0 POC Complete ✅
+
+Phase 0 implements a simple proof-of-concept to validate plugin mechanics:
+- ✅ Action registration and menu integration
+- ✅ Editor context access and document modification
+- ✅ Settings persistence (application-level)
+- ✅ Undo/redo support via WriteCommandAction
+
+**Try the POC:**
+1. Run `./gradlew runIde` to launch sandbox IDE
+2. Open any file, right-click in editor
+3. Select `Claritas` → `Format Current Line (POC)`
+4. Current line will be replaced with `// CLARITAS: [original text]`
+
+See `docs/PHASE0_TESTING.md` for complete manual testing guide.
+
+**Next:** Phase 1 will replace POC logic with real comment processing (flowerbox formatting, PSI-based parsing, text normalization).
+
 ## Development
 
 ```bash
 ./gradlew runIde        # Run plugin in sandbox IDE
-./gradlew test          # Execute test suite
+./gradlew test          # Execute test suite (3/3 passing)
 ./gradlew buildPlugin   # Create distribution package
+./gradlew ktlintFormat  # Auto-format code (3-space indent)
 ```
 
-Built on IntelliJ PSI APIs for safe, language-aware transformations. Three core services handle comment processing, Javadoc generation, and batch operations. See `docs/TECHNICAL_DESIGN.md` for architecture details and implementation phases.
+Built on IntelliJ PSI APIs for safe, language-aware transformations. Three core services handle comment processing, Javadoc generation, and batch operations. See `docs/TECHNICAL_DESIGN.md` for architecture details and `docs/TODO.md` for implementation phases.
