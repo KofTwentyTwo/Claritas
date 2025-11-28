@@ -18,7 +18,21 @@
    <resource-bundle>messages.Claritas</resource-bundle>
 
    <extensions defaultExtensionNs="com.intellij">
-      <toolWindow factoryClass="com.kof22.claritas.toolWindow.ClaritasWindowFactory" id="ClaritasWindow"/>
       <postStartupActivity implementation="com.kof22.claritas.startup.ClaritasActivity"/>
+      <applicationConfigurable
+              instance="com.kof22.claritas.settings.ClaritasSettingsConfigurable"
+              id="claritas.settings"
+              displayName="Claritas"/>
    </extensions>
+
+   <actions>
+      <group id="Claritas.Menu" text="Claritas" description="Claritas comment formatting actions" popup="true">
+         <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+
+         <action id="Claritas.FormatCurrentLine"
+                 class="com.kof22.claritas.actions.FormatCurrentLineAction"
+                 text="Format Current Line (POC)"
+                 description="POC action that replaces the current line with a Claritas-formatted version"/>
+      </group>
+   </actions>
 </idea-plugin>

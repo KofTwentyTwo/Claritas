@@ -16,22 +16,25 @@
 package com.kof22.claritas.services
 
 import com.intellij.openapi.components.Service
+import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
 import com.kof22.claritas.ClaritasBundle
 
+/**
+ * Claritas service for project-level operations.
+ * This service will be used for future features like caching and batch processing.
+ */
 @Service(Service.Level.PROJECT)
 class ClaritasService(
-   project: Project
-)
-{
+   private val project: Project
+) {
    init
    {
       thisLogger().info(ClaritasBundle.message("projectService", project.name))
-      thisLogger().warn(
-         "Don't forget to remove all non-needed sample code files with their corresponding registration entries in `plugin.xml`."
-      )
    }
 
-   fun getRandomNumber() = (1..100).random()
+   companion object {
+      fun getInstance(project: Project): ClaritasService = project.service()
+   }
 }

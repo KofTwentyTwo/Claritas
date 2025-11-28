@@ -24,10 +24,8 @@ import com.intellij.util.PsiErrorElementUtil
 import com.kof22.claritas.services.ClaritasService
 
 @TestDataPath("\$CONTENT_ROOT/src/test/testData")
-class ClaritasTest : BasePlatformTestCase()
-{
-   fun testXMLFile()
-   {
+class ClaritasTest : BasePlatformTestCase() {
+   fun testXMLFile() {
       val psiFile = myFixture.configureByText(XmlFileType.INSTANCE, "<foo>bar</foo>")
       val xmlFile = assertInstanceOf(psiFile, XmlFile::class.java)
 
@@ -41,16 +39,15 @@ class ClaritasTest : BasePlatformTestCase()
       }
    }
 
-   fun testRename()
-   {
+   fun testRename() {
       myFixture.testRename("foo.xml", "foo_after.xml", "a2")
    }
 
-   fun testProjectService()
-   {
+   fun testProjectService() {
       val projectService = project.service<ClaritasService>()
 
-      assertNotSame(projectService.getRandomNumber(), projectService.getRandomNumber())
+      // Simple test that the service can be instantiated
+      assertNotNull(projectService)
    }
 
    override fun getTestDataPath() = "src/test/testData/rename"

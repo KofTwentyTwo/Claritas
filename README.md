@@ -1,37 +1,65 @@
 # Claritas
 
-**Claritas – Precision. Structure. Clarity. Your code—refined and illuminated.**
+**Precision. Structure. Clarity. Your code—refined and illuminated.**
 
 <!-- Plugin description -->
-Claritas is an IntelliJ plugin designed to bring discipline and refinement to your codebase. It enforces structural consistency, coding standards, and configuration correctness while providing in-editor insights that help you write cleaner and more expressive code. With customizable rules and intelligent analysis, Claritas becomes the guardian of clarity within your projects. Your code emerges polished, coherent, and illuminated—every time.
+Claritas is an IntelliJ plugin that transforms messy comments and incomplete Javadocs into beautiful, consistent documentation. Using PSI-based analysis, it enforces your team's documentation standards while preserving content and ensuring safe, reversible transformations. Turn legacy code into well-documented, maintainable systems with a single action.
 <!-- Plugin description end -->
 
-## Features (planned)
+## What It Does
 
-- Enforce project-wide code style and structural rules
-- Validate configuration files (build scripts, YAML/JSON/XML, etc.)
-- Provide inline inspections and QuickFixes
-- Support custom rule sets per project or per team
-- Generate reports on style violations and structural drift
+Claritas brings discipline and elegance to Java documentation through three core features:
 
-## Getting Started
+**Comment Flowerboxing** – Transform any comment into structured flowerbox style with configurable borders, width, and formatting. Inline comments get dynamic width; Javadocs use fixed-width flowerbox structure.
 
-1. Clone this repository:  
-   `git clone https://github.com/KofTwentyTwo/Claritas.git`
-2. Open it in IntelliJ IDEA.
-3. Run the plugin in a sandbox IDE:  
-   `./gradlew runIde`
-4. In the sandbox IDE, open a project and try **Claritas → Analyze File** (or whatever first action you define).
+```java
+// Before
+/* This method processes orders and applies validation rules 
+before saving to database */
 
-## Roadmap
+// After
+/*******************************************************************************
+ ** This method processes orders and applies validation rules before saving to
+ ** database.
+ *******************************************************************************/
+```
 
-- v0.1 – Core prototype (single-file inspections, basic settings)
-- v0.2 – Project-level rule engine and configuration validation
-- v0.3 – Structural intelligence and dashboards
-- v0.4 – Team rule sharing and Git integration
-- v0.5 – AI-assisted rule suggestions and refactoring proposals
-- v1.0 – Public JetBrains Marketplace release
+**Javadoc Generation** – Create complete, properly structured Javadocs from method signatures. Extracts parameters, return types, and exceptions while preserving any existing documentation you've written.
 
----
+```java
+// Before
+public Order processOrder(Integer customerId, List<Item> items) throws ValidationException {
 
-Plugin based on the [IntelliJ Platform Plugin Template](https://github.com/JetBrains/intellij-platform-plugin-template).
+// After
+/*******************************************************************************
+ ** Process an order for the given customer.
+ **
+ ** @param customerId the customer identifier
+ ** @param items the list of items to process
+ ** @return the processed order
+ ** @throws ValidationException if validation fails
+ *******************************************************************************/
+public Order processOrder(Integer customerId, List<Item> items) throws ValidationException {
+```
+
+**File Processing** – Apply formatting rules across entire files with a single command. All changes in one undo action.
+
+## Configuration
+
+Settings available at application or project level (stored in `.idea/claritas.xml`):
+- Flowerbox width, borders, and prefix characters
+- Line wrapping behavior and reflow thresholds
+- Javadoc tag ordering and content preservation rules
+- File processing scope and options
+
+Live preview shows formatting results as you adjust settings.
+
+## Development
+
+```bash
+./gradlew runIde        # Run plugin in sandbox IDE
+./gradlew test          # Execute test suite
+./gradlew buildPlugin   # Create distribution package
+```
+
+Built on IntelliJ PSI APIs for safe, language-aware transformations. Three core services handle comment processing, Javadoc generation, and batch operations. See `docs/TECHNICAL_DESIGN.md` for architecture details and implementation phases.
