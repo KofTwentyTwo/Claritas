@@ -39,19 +39,24 @@
 
 ---
 
-### Test 2: Action Appears in Menu
+### Test 2: Action Appears in Menus
 
-**Expected Result:** "Claritas" menu group appears in editor context menu
+**Expected Result:** "Claritas" menu appears in both top-level menu bar and editor context menu
 
 **Steps:**
-1. Open any file in the editor (create a test .txt or .java file)
-2. Right-click in the editor
-3. Look for "Claritas" menu at the bottom
-4. Expand the "Claritas" submenu
+1. Check top menu bar for "Claritas" menu (should be after "Tools")
+2. Click "Claritas" menu
+3. Verify "Format Current Line (POC)" action is listed with `⌘F6` shortcut
+4. Open any file in the editor (create a test .txt or .java file)
+5. Right-click in the editor
+6. Look for "Claritas" menu at the bottom
+7. Expand the "Claritas" submenu
 
 **Success Criteria:**
-- ✅ "Claritas" menu appears
-- ✅ "Format Current Line (POC)" action is visible
+- ✅ "Claritas" menu appears in top menu bar (after Tools)
+- ✅ "Claritas" menu appears in editor context menu
+- ✅ "Format Current Line (POC)" action is visible in both locations
+- ✅ Keyboard shortcut `⌘F6` (Mac) or `Ctrl+F6` (Windows/Linux) is shown
 
 ---
 
@@ -63,8 +68,10 @@
 1. Create or open a text file
 2. Type some text: `Hello World`
 3. Place cursor on that line
-4. Right-click → `Claritas` → `Format Current Line (POC)`
-5. Observe the result
+4. **Option A:** Right-click → `Claritas` → `Format Current Line (POC)`
+5. **Option B:** Press `⌘F6` (Mac) or `Ctrl+F6` (Windows/Linux)
+6. **Option C:** Menu bar → `Claritas` → `Format Current Line (POC)`
+7. Observe the result
 
 **Expected Output:**
 ```
@@ -112,19 +119,20 @@
 
 ---
 
-### Test 6: Settings Page Exists
+### Test 6: Settings Page Exists Under Editor
 
-**Expected Result:** Claritas settings page appears in Preferences
+**Expected Result:** Claritas settings page appears under Editor section in Preferences
 
 **Steps:**
 1. Open Preferences: `Cmd+,` (Mac) or `Ctrl+Alt+S` (Windows/Linux)
-2. Search for "Claritas" in the search box
-3. Or navigate manually through the settings tree
-4. Find "Claritas" settings page
+2. Expand "Editor" section in left sidebar
+3. Look for "Claritas" under Editor
+4. OR search for "Claritas" in the search box
 
 **Success Criteria:**
-- ✅ "Claritas" page appears in settings
+- ✅ "Claritas" page appears under "Editor" section
 - ✅ Page contains one checkbox: "Enable Claritas Plugin"
+- ✅ Settings are accessible from Editor → Claritas path
 
 ---
 

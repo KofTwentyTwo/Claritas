@@ -20,19 +20,31 @@
    <extensions defaultExtensionNs="com.intellij">
       <postStartupActivity implementation="com.kof22.claritas.startup.ClaritasActivity"/>
       <applicationConfigurable
+              parentId="editor"
               instance="com.kof22.claritas.settings.ClaritasSettingsConfigurable"
               id="claritas.settings"
               displayName="Claritas"/>
    </extensions>
 
    <actions>
-      <group id="Claritas.Menu" text="Claritas" description="Claritas comment formatting actions" popup="true">
-         <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+      <!-- Top-level Claritas menu -->
+      <group id="Claritas.TopLevelMenu" text="Claritas" description="Claritas comment formatting" popup="true">
+         <add-to-group group-id="MainMenu" anchor="after" relative-to-action="ToolsMenu"/>
 
          <action id="Claritas.FormatCurrentLine"
                  class="com.kof22.claritas.actions.FormatCurrentLineAction"
                  text="Format Current Line (POC)"
-                 description="POC action that replaces the current line with a Claritas-formatted version"/>
+                 description="POC action that replaces the current line with a Claritas-formatted version">
+            <keyboard-shortcut keymap="$default" first-keystroke="meta F6"/>
+            <keyboard-shortcut keymap="Mac OS X" first-keystroke="meta F6"/>
+            <keyboard-shortcut keymap="Mac OS X 10.5+" first-keystroke="meta F6"/>
+         </action>
+      </group>
+
+      <!-- Also add to editor context menu -->
+      <group id="Claritas.EditorPopup" text="Claritas" description="Claritas comment formatting actions" popup="true">
+         <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+         <reference ref="Claritas.FormatCurrentLine"/>
       </group>
    </actions>
 </idea-plugin>
