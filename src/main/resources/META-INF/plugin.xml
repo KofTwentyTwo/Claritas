@@ -27,9 +27,9 @@
    </extensions>
 
    <actions>
-      <!-- Top-level Claritas menu -->
-      <group id="Claritas.TopLevelMenu" text="Claritas" description="Claritas comment formatting" popup="true">
-         <add-to-group group-id="MainMenu" anchor="before" relative-to-action="HelpMenu"/>
+      <!-- Claritas submenu inside Code menu -->
+      <group id="Claritas.CodeMenu" text="Claritas" description="Claritas comment formatting" popup="true">
+         <add-to-group group-id="CodeMenu" anchor="last"/>
 
          <action id="Claritas.FormatCurrentLine"
                  class="com.kof22.claritas.actions.FormatCurrentLineAction"
