@@ -29,7 +29,7 @@
    <actions>
       <!-- Top-level Claritas menu -->
       <group id="Claritas.TopLevelMenu" text="Claritas" description="Claritas comment formatting" popup="true">
-         <add-to-group group-id="MainMenu" anchor="after" relative-to-action="ToolsMenu"/>
+         <add-to-group group-id="MainMenu" anchor="before" relative-to-action="HelpMenu"/>
 
          <action id="Claritas.FormatCurrentLine"
                  class="com.kof22.claritas.actions.FormatCurrentLineAction"
