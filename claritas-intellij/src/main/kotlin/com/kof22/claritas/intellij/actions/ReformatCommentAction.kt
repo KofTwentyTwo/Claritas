@@ -22,7 +22,7 @@ import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.psi.PsiManager
 import com.kof22.claritas.formatter.CommentFormatter
-import com.kof22.claritas.intellij.psi.CommentExtractor
+import com.kof22.claritas.intellij.psi.TextBlockExtractor
 import com.kof22.claritas.intellij.settings.ClaritasSettings
 import com.kof22.claritas.model.CommentType
 import com.kof22.claritas.model.FlowerboxStyle
@@ -76,14 +76,16 @@ class ReformatCommentAction : AnAction() {
       }
 
       // ////////////////////////////////////
-      // Extract comment at caret          //
+      // Extract text block at caret       //
       // ////////////////////////////////////
-      val commentBlock = CommentExtractor.extractCommentAtCaret(editor, psiFile)
-      if (commentBlock == null) {
-         thisLogger().info("No comment found at caret position")
+      val extraction = TextBlockExtractor.extractBlockAtCaret(editor, psiFile)
+      if (extraction == null) {
+         thisLogger().info("No text block found at caret position")
          // TODO: Show user notification
          return
       }
+
+      val (commentBlock, replacementRange) = extraction
 
       // ////////////////////////////////////
       // Get formatting style              //
@@ -110,39 +112,17 @@ class ReformatCommentAction : AnAction() {
          }
 
       // ////////////////////////////////////
-      // Find and replace the comment      //
-      // ////////////////////////////////////
-      val commentElement =
-         psiFile
-            .findElementAt(editor.caretModel.offset)
-            ?.let { element ->
-               // Navigate up to find the actual comment element
-               var current: com.intellij.psi.PsiElement? = element
-               while (current != null && current !is com.intellij.psi.PsiComment) {
-                  current = current.parent
-               }
-               current as? com.intellij.psi.PsiComment
-            }
-
-      if (commentElement == null) {
-         thisLogger().warn("Could not find comment PSI element")
-         return
-      }
-
-      val commentRange = CommentExtractor.getCommentRange(commentElement)
-
-      // ////////////////////////////////////
       // Replace using WriteCommandAction  //
       // ////////////////////////////////////
       WriteCommandAction.runWriteCommandAction(project) {
          editor.document.replaceString(
-            commentRange.startOffset,
-            commentRange.endOffset,
+            replacementRange.startOffset,
+            replacementRange.endOffset,
             indentedText
          )
       }
 
-      thisLogger().info("Formatted comment: ${commentBlock.type} at offset ${commentRange.startOffset}")
+      thisLogger().info("Formatted text block: ${commentBlock.type} at offset ${replacementRange.startOffset}")
    }
 
    override fun update(e: AnActionEvent) {
