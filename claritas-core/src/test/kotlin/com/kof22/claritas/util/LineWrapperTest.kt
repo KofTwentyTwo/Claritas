@@ -31,8 +31,6 @@ class LineWrapperTest
       assertEquals("Short text", lines[0])
    }
 
-
-
    @Test
    fun testWrapLongText()
    {
@@ -56,8 +54,6 @@ class LineWrapperTest
       assertEquals(text, rejoined)
    }
 
-
-
    @Test
    fun testWrapWithLongWord()
    {
@@ -72,8 +68,6 @@ class LineWrapperTest
       assertEquals("verylongwordthatexceedsthemaxwidth", lines[1])
       assertEquals("short", lines[2])
    }
-
-
 
    @Test
    fun testWrapParagraphs()

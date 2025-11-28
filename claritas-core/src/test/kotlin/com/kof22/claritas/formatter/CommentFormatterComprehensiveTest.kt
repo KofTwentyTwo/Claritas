@@ -24,7 +24,8 @@ import kotlin.test.assertTrue
 /**
  * Comprehensive tests for CommentFormatter covering all edge cases.
  */
-class CommentFormatterComprehensiveTest {
+class CommentFormatterComprehensiveTest
+{
    private val defaultStyle =
       FlowerboxStyle(
          borderChar = '*',
@@ -38,7 +39,8 @@ class CommentFormatterComprehensiveTest {
    ///////////////////////////////////////
 
    @Test
-   fun testSingleShortLine() {
+   fun testSingleShortLine()
+   {
       val formatter = CommentFormatter(defaultStyle)
       val block =
          CommentBlock(
@@ -53,7 +55,8 @@ class CommentFormatterComprehensiveTest {
    }
 
    @Test
-   fun testSingleLongLine() {
+   fun testSingleLongLine()
+   {
       val formatter = CommentFormatter(defaultStyle)
       val text = "This is a very long comment that definitely exceeds the normal line length and should be wrapped"
 
@@ -73,7 +76,8 @@ class CommentFormatterComprehensiveTest {
    }
 
    @Test
-   fun testSingleVeryLongLine() {
+   fun testSingleVeryLongLine()
+   {
       val formatter = CommentFormatter(defaultStyle)
       val text = "A".repeat(150) // 150 character line
 
@@ -98,7 +102,8 @@ class CommentFormatterComprehensiveTest {
    ///////////////////////////////////////
 
    @Test
-   fun testMultiLineShortLines() {
+   fun testMultiLineShortLines()
+   {
       val formatter = CommentFormatter(defaultStyle)
       val text = "Line one\nLine two\nLine three"
 
@@ -116,7 +121,8 @@ class CommentFormatterComprehensiveTest {
    }
 
    @Test
-   fun testMultiLineLongAtStart() {
+   fun testMultiLineLongAtStart()
+   {
       val formatter = CommentFormatter(defaultStyle)
       val longLine = "This is a very long line at the start that should be wrapped to multiple lines"
       val text = "$longLine\nShort line\nAnother short"
@@ -137,7 +143,8 @@ class CommentFormatterComprehensiveTest {
    }
 
    @Test
-   fun testMultiLineLongInMiddle() {
+   fun testMultiLineLongInMiddle()
+   {
       val formatter = CommentFormatter(defaultStyle)
       val longLine = "This middle line is exceptionally long and should be wrapped into multiple lines"
       val text = "Short start\n$longLine\nShort end"
@@ -156,7 +163,8 @@ class CommentFormatterComprehensiveTest {
    }
 
    @Test
-   fun testMultiLineLongAtEnd() {
+   fun testMultiLineLongAtEnd()
+   {
       val formatter = CommentFormatter(defaultStyle)
       val longLine = "The final line is very long and needs to be wrapped properly to fit within bounds"
       val text = "Short one\nShort two\n$longLine"
@@ -174,7 +182,8 @@ class CommentFormatterComprehensiveTest {
    }
 
    @Test
-   fun testMultiLineAllLong() {
+   fun testMultiLineAllLong()
+   {
       val formatter = CommentFormatter(defaultStyle)
       val long1 = "First line is very long and exceeds the typical line length that we expect"
       val long2 = "Second line is also quite lengthy and needs wrapping to maintain readability"
@@ -202,7 +211,8 @@ class CommentFormatterComprehensiveTest {
    ///////////////////////////////////////
 
    @Test
-   fun testExistingLineComment() {
+   fun testExistingLineComment()
+   {
       val formatter = CommentFormatter(defaultStyle)
       val text = "// This is an existing line comment"
 
@@ -222,7 +232,8 @@ class CommentFormatterComprehensiveTest {
    }
 
    @Test
-   fun testExistingBlockComment() {
+   fun testExistingBlockComment()
+   {
       val formatter = CommentFormatter(defaultStyle)
       val text =
          """
@@ -245,7 +256,8 @@ class CommentFormatterComprehensiveTest {
    }
 
    @Test
-   fun testExistingJavadoc() {
+   fun testExistingJavadoc()
+   {
       val formatter = CommentFormatter(defaultStyle)
       val text =
          """
@@ -268,7 +280,8 @@ class CommentFormatterComprehensiveTest {
    }
 
    @Test
-   fun testExistingCommentWithLongLines() {
+   fun testExistingCommentWithLongLines()
+   {
       val formatter = CommentFormatter(defaultStyle)
       val longLine =
          "This line in the existing comment is very long and should be properly wrapped when reformatted"
@@ -294,7 +307,8 @@ class CommentFormatterComprehensiveTest {
    ///////////////////////////////////////
 
    @Test
-   fun testParagraphPreservation() {
+   fun testParagraphPreservation()
+   {
       val formatter = CommentFormatter(defaultStyle)
       val text = "First paragraph here.\n\nSecond paragraph here."
 
@@ -320,7 +334,8 @@ class CommentFormatterComprehensiveTest {
    ///////////////////////////////////////
 
    @Test
-   fun testEmptyText() {
+   fun testEmptyText()
+   {
       val formatter = CommentFormatter(defaultStyle)
       val block =
          CommentBlock(
@@ -339,7 +354,8 @@ class CommentFormatterComprehensiveTest {
    }
 
    @Test
-   fun testWhitespaceOnly() {
+   fun testWhitespaceOnly()
+   {
       val formatter = CommentFormatter(defaultStyle)
       val block =
          CommentBlock(
@@ -357,7 +373,8 @@ class CommentFormatterComprehensiveTest {
    }
 
    @Test
-   fun testSpecialCharacters() {
+   fun testSpecialCharacters()
+   {
       val formatter = CommentFormatter(defaultStyle)
       val text = "Comment with special chars: @#$%^&*()"
 
@@ -373,4 +390,3 @@ class CommentFormatterComprehensiveTest {
       assertTrue(result.formattedText.contains("@#$%^&*()"))
    }
 }
-

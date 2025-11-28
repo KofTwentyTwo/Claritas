@@ -34,7 +34,8 @@ import com.kof22.claritas.model.CommentType
  * - Raw text lines (will be converted to comments)
  * - Multi-line text blocks
  */
-object TextBlockExtractor {
+object TextBlockExtractor
+{
    /**
     * Extract text block at the current caret position.
     *
@@ -48,14 +49,16 @@ object TextBlockExtractor {
    fun extractBlockAtCaret(
       editor: Editor,
       psiFile: PsiFile
-   ): Pair<CommentBlock, TextRange> {
+   ): Pair<CommentBlock, TextRange>
+   {
       val document = editor.document
       val selectionModel = editor.selectionModel
 
       // //////////////////////////////////////////////////
       // Case 1: User has selected text - use selection //
       // //////////////////////////////////////////////////
-      if (selectionModel.hasSelection()) {
+      if (selectionModel.hasSelection())
+      {
          return extractSelectedBlock(selectionModel, document)
       }
 
@@ -66,7 +69,8 @@ object TextBlockExtractor {
       // Case 2: Caret is in a comment - extract comment //
       // ///////////////////////////////////////////////////
       val comment = findComment(element)
-      if (comment != null) {
+      if (comment != null)
+      {
          return extractCommentBlock(comment, document)
       }
 
@@ -82,7 +86,8 @@ object TextBlockExtractor {
    private fun extractSelectedBlock(
       selectionModel: com.intellij.openapi.editor.SelectionModel,
       document: Document
-   ): Pair<CommentBlock, TextRange> {
+   ): Pair<CommentBlock, TextRange>
+   {
       val startOffset = selectionModel.selectionStart
       val endOffset = selectionModel.selectionEnd
       val selectedText = selectionModel.selectedText ?: ""
@@ -111,7 +116,8 @@ object TextBlockExtractor {
    private fun extractCommentBlock(
       comment: PsiComment,
       document: Document
-   ): Pair<CommentBlock, TextRange> {
+   ): Pair<CommentBlock, TextRange>
+   {
       val text = comment.text
       val type = detectCommentType(text)
 
@@ -119,9 +125,11 @@ object TextBlockExtractor {
       // For multi-line comments, expand to block   //
       // //////////////////////////////////////////////
       val expandedRange =
-         if (type == CommentType.BLOCK || type == CommentType.JAVADOC) {
+         if (type == CommentType.BLOCK || type == CommentType.JAVADOC)
+         {
             expandCommentBlock(comment, document)
-         } else {
+         } else
+         {
             comment.textRange
          }
 
@@ -147,7 +155,8 @@ object TextBlockExtractor {
    private fun expandCommentBlock(
       comment: PsiComment,
       document: Document
-   ): TextRange {
+   ): TextRange
+   {
       val text = comment.text
       val startOffset = comment.textRange.startOffset
 
@@ -155,9 +164,11 @@ object TextBlockExtractor {
       // Find the opening and closing markers       //
       // //////////////////////////////////////////////
       val openMarker =
-         if (text.startsWith("/**")) {
+         if (text.startsWith("/**"))
+         {
             "/**"
-         } else {
+         } else
+         {
             "/*"
          }
 
@@ -166,7 +177,8 @@ object TextBlockExtractor {
       // //////////////////////////////////////////////
       // If comment is already properly bounded     //
       // //////////////////////////////////////////////
-      if (text.endsWith(closeMarker)) {
+      if (text.endsWith(closeMarker))
+      {
          return comment.textRange
       }
 
@@ -177,14 +189,17 @@ object TextBlockExtractor {
       val totalLines = document.lineCount
       var endLine = startLine
 
-      for (lineNum in startLine + 1 until totalLines) {
+      for (lineNum in startLine + 1 until totalLines)
+      {
          val lineText = getLineText(document, lineNum)
-         if (lineText.contains(closeMarker)) {
+         if (lineText.contains(closeMarker))
+         {
             endLine = lineNum
             break
          }
          // Stop if we hit a blank line or new comment
-         if (lineText.isBlank() || lineText.trim().startsWith("/*") || lineText.trim().startsWith("//")) {
+         if (lineText.isBlank() || lineText.trim().startsWith("/*") || lineText.trim().startsWith("//"))
+         {
             break
          }
       }
@@ -205,45 +220,50 @@ object TextBlockExtractor {
    private fun extractCurrentLine(
       offset: Int,
       document: Document
-   ): Pair<CommentBlock, TextRange> {
+   ): Pair<CommentBlock, TextRange>
+   {
       val currentLine = document.getLineNumber(offset)
       val totalLines = document.lineCount
 
-      // //////////////////////////////////////////////
-      // Find the start of the block (scan upward)  //
-      // //////////////////////////////////////////////
+      ///////////////////////////////////////////////
+      // Find the start of the block (scan upward) //
+      ///////////////////////////////////////////////
       var startLine = currentLine
-      while (startLine > 0) {
+      while (startLine > 0)
+      {
          val lineText = getLineText(document, startLine - 1)
-         if (lineText.isBlank()) {
+         if (lineText.isBlank())
+         {
             break
          }
          startLine--
       }
 
-      // //////////////////////////////////////////////
-      // Find the end of the block (scan downward)  //
-      // //////////////////////////////////////////////
+      ///////////////////////////////////////////////
+      // Find the end of the block (scan downward) //
+      ///////////////////////////////////////////////
       var endLine = currentLine
-      while (endLine < totalLines - 1) {
+      while (endLine < totalLines - 1)
+      {
          val lineText = getLineText(document, endLine + 1)
-         if (lineText.isBlank()) {
+         if (lineText.isBlank())
+         {
             break
          }
          endLine++
       }
 
-      // //////////////////////////////////////////////
-      // Extract the entire block                   //
-      // //////////////////////////////////////////////
+      //////////////////////////////
+      // Extract the entire block //
+      //////////////////////////////
       val blockStartOffset = document.getLineStartOffset(startLine)
       val blockEndOffset = document.getLineEndOffset(endLine)
 
       val blockText = document.getText(TextRange(blockStartOffset, blockEndOffset))
 
-      // //////////////////////////////////////////////
-      // Calculate indentation from first line      //
-      // //////////////////////////////////////////////
+      ///////////////////////////////////////////
+      // Calculate indentation from first line //
+      ///////////////////////////////////////////
       val firstLineText = getLineText(document, startLine)
       val indent = firstLineText.takeWhile { it == ' ' }.length
 
@@ -264,7 +284,8 @@ object TextBlockExtractor {
    private fun getLineText(
       document: Document,
       lineNumber: Int
-   ): String {
+   ): String
+   {
       val startOffset = document.getLineStartOffset(lineNumber)
       val endOffset = document.getLineEndOffset(lineNumber)
       return document.getText(TextRange(startOffset, endOffset))
@@ -273,30 +294,35 @@ object TextBlockExtractor {
    /**
     * Find a comment element starting from the given PSI element.
     */
-   private fun findComment(element: PsiElement?): PsiComment? {
+   private fun findComment(element: PsiElement?): PsiComment?
+   {
       if (element == null) return null
 
-      // ////////////////////////////////////////////
+      //////////////////////////////////////////////
       // Check if the element itself is a comment //
-      // ////////////////////////////////////////////
-      if (element is PsiComment) {
+      //////////////////////////////////////////////
+      if (element is PsiComment)
+      {
          return element
       }
 
-      // ////////////////////////////////////
+      //////////////////////////////////////
       // Check if the parent is a comment //
-      // ////////////////////////////////////
+      //////////////////////////////////////
       val parent = element.parent
-      if (parent is PsiComment) {
+      if (parent is PsiComment)
+      {
          return parent
       }
 
-      // //////////////////////////////////////////////////////////
+      ////////////////////////////////////////////////////////////
       // If we're in whitespace, check previous sibling comment //
-      // //////////////////////////////////////////////////////////
-      if (element is PsiWhiteSpace) {
+      ////////////////////////////////////////////////////////////
+      if (element is PsiWhiteSpace)
+      {
          val prevSibling = PsiTreeUtil.skipWhitespacesBackward(element)
-         if (prevSibling is PsiComment) {
+         if (prevSibling is PsiComment)
+         {
             return prevSibling
          }
       }
@@ -308,7 +334,8 @@ object TextBlockExtractor {
     * Detect the type of comment from text.
     */
    private fun detectCommentType(text: String): CommentType =
-      when {
+      when
+      {
          text.startsWith("/**") -> CommentType.JAVADOC
          text.startsWith("/*") -> CommentType.BLOCK
          text.startsWith("//") -> CommentType.LINE
@@ -321,7 +348,8 @@ object TextBlockExtractor {
    private fun calculateIndent(
       comment: PsiComment,
       document: Document
-   ): Int {
+   ): Int
+   {
       val startOffset = comment.textRange.startOffset
       val lineNumber = document.getLineNumber(startOffset)
       val lineStartOffset = document.getLineStartOffset(lineNumber)
@@ -336,7 +364,8 @@ object TextBlockExtractor {
       document: Document,
       lineStartOffset: Int,
       contentStartOffset: Int
-   ): Int {
+   ): Int
+   {
       val lineText = document.getText(TextRange(lineStartOffset, contentStartOffset))
       return lineText.takeWhile { it == ' ' }.length
    }
