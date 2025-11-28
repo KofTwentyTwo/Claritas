@@ -15,10 +15,10 @@
 
    <depends>com.intellij.modules.platform</depends>
 
-   <resource-bundle>messages.MyBundle</resource-bundle>
+   <resource-bundle>messages.Claritas</resource-bundle>
 
    <extensions defaultExtensionNs="com.intellij">
-      <toolWindow factoryClass="com.kof22.claritas.toolWindow.MyToolWindowFactory" id="MyToolWindow"/>
-      <postStartupActivity implementation="com.kof22.claritas.startup.MyProjectActivity"/>
+      <toolWindow factoryClass="com.kof22.claritas.toolWindow.ClaritasWindowFactory" id="ClaritasWindow"/>
+      <postStartupActivity implementation="com.kof22.claritas.startup.ClaritasActivity"/>
    </extensions>
 </idea-plugin>
