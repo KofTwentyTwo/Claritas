@@ -23,8 +23,10 @@ import com.intellij.openapi.startup.ProjectActivity
  * Claritas startup activity.
  * Executes when a project is opened. Can be used for initialization tasks.
  */
-class ClaritasActivity : ProjectActivity {
-   override suspend fun execute(project: Project) {
+class ClaritasActivity : ProjectActivity
+{
+   override suspend fun execute(project: Project)
+   {
       thisLogger().info("Claritas plugin initialized for project: ${project.name}")
    }
 }

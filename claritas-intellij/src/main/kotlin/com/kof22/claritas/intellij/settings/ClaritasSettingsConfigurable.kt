@@ -27,13 +27,15 @@ import javax.swing.JPanel
  * This is a simple POC version with minimal UI.
  * Will be expanded in Phase 2 to include tabbed interface with all options.
  */
-class ClaritasSettingsConfigurable : Configurable {
+class ClaritasSettingsConfigurable : Configurable
+{
    private var settingsPanel: JPanel? = null
    private var enableClaritasCheckbox: JCheckBox? = null
 
    override fun getDisplayName(): String = "Claritas"
 
-   override fun createComponent(): JComponent? {
+   override fun createComponent(): JComponent
+   {
       val panel = JPanel(BorderLayout())
       val checkbox = JCheckBox("Enable Claritas Plugin")
 
@@ -45,22 +47,26 @@ class ClaritasSettingsConfigurable : Configurable {
       return panel
    }
 
-   override fun isModified(): Boolean {
+   override fun isModified(): Boolean
+   {
       val settings = ClaritasSettings.getInstance()
       return enableClaritasCheckbox?.isSelected != settings.state.enableClaritas
    }
 
-   override fun apply() {
+   override fun apply()
+   {
       val settings = ClaritasSettings.getInstance()
       settings.state.enableClaritas = enableClaritasCheckbox?.isSelected ?: true
    }
 
-   override fun reset() {
+   override fun reset()
+   {
       val settings = ClaritasSettings.getInstance()
       enableClaritasCheckbox?.isSelected = settings.state.enableClaritas
    }
 
-   override fun disposeUIResources() {
+   override fun disposeUIResources()
+   {
       settingsPanel = null
       enableClaritasCheckbox = null
    }

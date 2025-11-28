@@ -34,8 +34,10 @@ import com.intellij.openapi.util.TextRange
  * - Document modification works
  * - Undo/redo functionality works
  */
-class FormatCurrentLineAction : AnAction() {
-   override fun actionPerformed(e: AnActionEvent) {
+class FormatCurrentLineAction : AnAction()
+{
+   override fun actionPerformed(e: AnActionEvent)
+   {
       val editor =
          e.getData(CommonDataKeys.EDITOR) ?: run {
             thisLogger().warn("No editor available")
@@ -71,7 +73,8 @@ class FormatCurrentLineAction : AnAction() {
       thisLogger().info("Formatted line $lineNumber: '$lineText' -> '$replacementText'")
    }
 
-   override fun update(e: AnActionEvent) {
+   override fun update(e: AnActionEvent)
+   {
       // Enable the action only when an editor is available
       val editor = e.getData(CommonDataKeys.EDITOR)
       val project = e.project

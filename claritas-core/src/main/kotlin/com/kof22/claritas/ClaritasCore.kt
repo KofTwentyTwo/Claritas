@@ -24,7 +24,7 @@ package com.kof22.claritas
  *
  * This placeholder class will be replaced with actual implementation in Phase 1.
  */
-object ClaritasCore {
+object ClaritasCore
+{
    const val VERSION = "0.0.2"
 }
-

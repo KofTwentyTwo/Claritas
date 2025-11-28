@@ -32,7 +32,8 @@ import com.intellij.openapi.components.service
    storages = [Storage("ClaritasSettings.xml")]
 )
 @Service(Service.Level.APP)
-class ClaritasSettings : PersistentStateComponent<ClaritasSettings.State> {
+class ClaritasSettings : PersistentStateComponent<ClaritasSettings.State>
+{
    data class State(
       var enableClaritas: Boolean = true
    )
@@ -41,11 +42,13 @@ class ClaritasSettings : PersistentStateComponent<ClaritasSettings.State> {
 
    override fun getState(): State = myState
 
-   override fun loadState(state: State) {
+   override fun loadState(state: State)
+   {
       myState = state
    }
 
-   companion object {
+   companion object
+   {
       fun getInstance(): ClaritasSettings = service()
    }
 }

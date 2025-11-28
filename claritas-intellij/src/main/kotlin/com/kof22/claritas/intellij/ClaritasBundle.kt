@@ -22,7 +22,8 @@ import org.jetbrains.annotations.PropertyKey
 @NonNls
 private const val BUNDLE = "messages.Claritas"
 
-object ClaritasBundle : DynamicBundle(BUNDLE) {
+object ClaritasBundle : DynamicBundle(BUNDLE)
+{
    @JvmStatic
    fun message(
       @PropertyKey(resourceBundle = BUNDLE) key: String,
