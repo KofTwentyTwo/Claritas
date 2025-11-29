@@ -30,33 +30,34 @@ import com.kof22.claritas.model.CommentType
  * Extracts text blocks from the editor for formatting.
  *
  * Can extract:
- * - Existing comments (line, block, javadoc)
- * - Raw text lines (will be converted to comments)
+ * - Existing comments (line, block, or documentation style)
+ * - Raw text (selected text without comment markers)
  * - Multi-line text blocks
+ *
+ * Extracted blocks are classified as:
+ * - DOCUMENTATION: Comments starting with JavaDoc/JSDoc/KDoc syntax
+ * - STANDARD: All other comments and raw text
  */
 object TextBlockExtractor
 {
    /**
-    * Extract text block at the current caret position.
+    * Extract text block at the current caret position.  This is the main entry point for formatting.
     *
     * Strategy:
-    * 1. Check if caret is in an existing comment - use that
-    * 2. Otherwise, extract the current line
-    * 3. If selection exists, use selected text
+    * 1. If selection exists, use selected text
+    * 2. Check if caret is in an existing comment - use that
+    * 3. Otherwise, extract the current line as raw text
     *
     * @return Pair of CommentBlock and TextRange for replacement
     */
-   fun extractBlockAtCaret(
-      editor: Editor,
-      psiFile: PsiFile
-   ): Pair<CommentBlock, TextRange>
+   fun extractBlockAtCaret(editor: Editor, psiFile: PsiFile): Pair<CommentBlock, TextRange>
    {
       val document = editor.document
       val selectionModel = editor.selectionModel
 
-      // //////////////////////////////////////////////////
+      ////////////////////////////////////////////////////
       // Case 1: User has selected text - use selection //
-      // //////////////////////////////////////////////////
+      ////////////////////////////////////////////////////
       if (selectionModel.hasSelection())
       {
          return extractSelectedBlock(selectionModel, document)
@@ -65,149 +66,89 @@ object TextBlockExtractor
       val offset = editor.caretModel.offset
       val element = psiFile.findElementAt(offset)
 
-      // ///////////////////////////////////////////////////
+      /////////////////////////////////////////////////////
       // Case 2: Caret is in a comment - extract comment //
-      // ///////////////////////////////////////////////////
+      /////////////////////////////////////////////////////
       val comment = findComment(element)
       if (comment != null)
       {
          return extractCommentBlock(comment, document)
       }
 
-      // ////////////////////////////////////////////
+      //////////////////////////////////////////////
       // Case 3: Extract current line as raw text //
-      // ////////////////////////////////////////////
-      return extractCurrentLine(offset, document)
+      //////////////////////////////////////////////
+      return extractBlockFromCurrentLine(offset, document)
    }
 
    /**
     * Extract selected text as a block.
+    *
+    * Edge case: If selection is empty (zero-length), falls back to extracting from current line.
     */
-   private fun extractSelectedBlock(
-      selectionModel: com.intellij.openapi.editor.SelectionModel,
-      document: Document
-   ): Pair<CommentBlock, TextRange>
+   private fun extractSelectedBlock(selectionModel: com.intellij.openapi.editor.SelectionModel, document: Document): Pair<CommentBlock, TextRange>
    {
+      ///////////////////////////////////////////////////////
+      // get the starting and ending line of the selection //
+      ///////////////////////////////////////////////////////
       val startOffset = selectionModel.selectionStart
       val endOffset = selectionModel.selectionEnd
-      val selectedText = selectionModel.selectedText ?: ""
-
+      
+      ///////////////////////////////////////////////
+      // Handle edge case: empty selection         //
+      ///////////////////////////////////////////////
+      if (startOffset == endOffset)
+      {
+         return extractBlockFromCurrentLine(startOffset, document)
+      }
+      
       val startLine = document.getLineNumber(startOffset)
-      val lineStartOffset = document.getLineStartOffset(startLine)
-      val indent = calculateIndentFromOffset(document, lineStartOffset, startOffset)
+      val endLine = document.getLineNumber(endOffset)
+
+      /////////////////////////////////////////////////////////////////////
+      // get the full lines for the first and last line of the selection //
+      /////////////////////////////////////////////////////////////////////
+      val blockStartOffset = document.getLineStartOffset(startLine)
+      val blockEndOffset = document.getLineEndOffset(endLine)
+
+      val blockText = document.getText(TextRange(blockStartOffset, blockEndOffset))
+      val firstLineText = getLineText(document, startLine)
+      val indent = firstLineText.takeWhile { it == ' ' || it == '\t' }.length
 
       val block =
          CommentBlock(
-            rawText = selectedText,
-            type = detectCommentType(selectedText),
+            rawText = blockText,
+            type = detectCommentType(blockText),
             indentLevel = indent,
             preserveParagraphs = true
          )
 
-      return Pair(block, TextRange(startOffset, endOffset))
+      return Pair(block, TextRange(blockStartOffset, blockEndOffset))
    }
 
    /**
     * Extract an existing comment, expanding to include entire block.
     *
     * For block comments, this expands from the opening marker to the
-    * closing marker, even if there are improperly formatted lines in between.
+    * closing marker using the default PSI parsing.
     */
-   private fun extractCommentBlock(
-      comment: PsiComment,
-      document: Document
-   ): Pair<CommentBlock, TextRange>
+   private fun extractCommentBlock(comment: PsiComment, document: Document): Pair<CommentBlock, TextRange>
    {
       val text = comment.text
       val type = detectCommentType(text)
-
-      // //////////////////////////////////////////////
-      // For multi-line comments, expand to block   //
-      // //////////////////////////////////////////////
-      val expandedRange =
-         if (type == CommentType.BLOCK || type == CommentType.JAVADOC)
-         {
-            expandCommentBlock(comment, document)
-         } else
-         {
-            comment.textRange
-         }
-
-      val expandedText = document.getText(expandedRange)
       val indent = calculateIndent(comment, document)
 
-      val block =
-         CommentBlock(
-            rawText = expandedText,
-            type = type,
-            indentLevel = indent,
-            preserveParagraphs = true
-         )
+      //////////////////////////////////////////////////////////////////////////////////////////////////
+      // We can just use the default PSI parsing for this, it should handle the entire comment nicely //
+      //////////////////////////////////////////////////////////////////////////////////////////////////
+      val block = CommentBlock(
+         rawText = text,
+         type = type,
+         indentLevel = indent,
+         preserveParagraphs = true
+      )
 
-      return Pair(block, expandedRange)
-   }
-
-   /**
-    * Expand a block comment to include all lines from /* to */.
-    *
-    * This handles cases where users have added improper lines in the middle.
-    */
-   private fun expandCommentBlock(
-      comment: PsiComment,
-      document: Document
-   ): TextRange
-   {
-      val text = comment.text
-      val startOffset = comment.textRange.startOffset
-
-      // //////////////////////////////////////////////
-      // Find the opening and closing markers       //
-      // //////////////////////////////////////////////
-      val openMarker =
-         if (text.startsWith("/**"))
-         {
-            "/**"
-         } else
-         {
-            "/*"
-         }
-
-      val closeMarker = "*/"
-
-      // //////////////////////////////////////////////
-      // If comment is already properly bounded     //
-      // //////////////////////////////////////////////
-      if (text.endsWith(closeMarker))
-      {
-         return comment.textRange
-      }
-
-      // //////////////////////////////////////////////
-      // Scan forward to find closing marker        //
-      // //////////////////////////////////////////////
-      val startLine = document.getLineNumber(startOffset)
-      val totalLines = document.lineCount
-      var endLine = startLine
-
-      for (lineNum in startLine + 1 until totalLines)
-      {
-         val lineText = getLineText(document, lineNum)
-         if (lineText.contains(closeMarker))
-         {
-            endLine = lineNum
-            break
-         }
-         // Stop if we hit a blank line or new comment
-         if (lineText.isBlank() || lineText.trim().startsWith("/*") || lineText.trim().startsWith("//"))
-         {
-            break
-         }
-      }
-
-      val blockStartOffset = document.getLineStartOffset(startLine)
-      val blockEndOffset = document.getLineEndOffset(endLine)
-
-      return TextRange(blockStartOffset, blockEndOffset)
+      return Pair(block, comment.textRange)
    }
 
    /**
@@ -217,10 +158,7 @@ object TextBlockExtractor
     * - Blank lines (whitespace only)
     * - Start/end of document
     */
-   private fun extractCurrentLine(
-      offset: Int,
-      document: Document
-   ): Pair<CommentBlock, TextRange>
+   private fun extractBlockFromCurrentLine(offset: Int, document: Document): Pair<CommentBlock, TextRange>
    {
       val currentLine = document.getLineNumber(offset)
       val totalLines = document.lineCount
@@ -265,12 +203,12 @@ object TextBlockExtractor
       // Calculate indentation from first line //
       ///////////////////////////////////////////
       val firstLineText = getLineText(document, startLine)
-      val indent = firstLineText.takeWhile { it == ' ' }.length
+      val indent = firstLineText.takeWhile { it == ' ' || it == '\t' }.length
 
       val block =
          CommentBlock(
             rawText = blockText,
-            type = CommentType.BLOCK, // Multi-line block
+            type = detectCommentType(blockText), // Detect from content
             indentLevel = indent,
             preserveParagraphs = true
          )
@@ -281,10 +219,7 @@ object TextBlockExtractor
    /**
     * Get text of a specific line.
     */
-   private fun getLineText(
-      document: Document,
-      lineNumber: Int
-   ): String
+   private fun getLineText(document: Document, lineNumber: Int): String
    {
       val startOffset = document.getLineStartOffset(lineNumber)
       val endOffset = document.getLineEndOffset(lineNumber)
@@ -332,23 +267,22 @@ object TextBlockExtractor
 
    /**
     * Detect the type of comment from text.
+    *
+    * Returns:
+    * - DOCUMENTATION: For JavaDoc/JSDoc/KDoc style comments
+    * - STANDARD: For all other comments or raw text
     */
    private fun detectCommentType(text: String): CommentType =
       when
       {
-         text.startsWith("/**") -> CommentType.JAVADOC
-         text.startsWith("/*") -> CommentType.BLOCK
-         text.startsWith("//") -> CommentType.LINE
-         else -> CommentType.LINE // Raw text becomes line comment
+         text.startsWith("/**") -> CommentType.DOCUMENTATION
+         else -> CommentType.STANDARD
       }
 
    /**
     * Calculate indentation from PSI comment element.
     */
-   private fun calculateIndent(
-      comment: PsiComment,
-      document: Document
-   ): Int
+   private fun calculateIndent(comment: PsiComment, document: Document): Int
    {
       val startOffset = comment.textRange.startOffset
       val lineNumber = document.getLineNumber(startOffset)
@@ -359,14 +293,13 @@ object TextBlockExtractor
 
    /**
     * Calculate indentation from offsets.
+    *
+    * Counts spaces and tabs (tabs count as 1 unit of indentation).
+    * This matches the raw character count approach used throughout the codebase.
     */
-   private fun calculateIndentFromOffset(
-      document: Document,
-      lineStartOffset: Int,
-      contentStartOffset: Int
-   ): Int
+   private fun calculateIndentFromOffset(document: Document, lineStartOffset: Int, contentStartOffset: Int): Int
    {
       val lineText = document.getText(TextRange(lineStartOffset, contentStartOffset))
-      return lineText.takeWhile { it == ' ' }.length
+      return lineText.takeWhile { it == ' ' || it == '\t' }.length
    }
 }

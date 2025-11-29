@@ -17,27 +17,32 @@ package com.kof22.claritas.model
 
 /**
  * Types of comments that Claritas can process.
+ *
+ * Claritas uses two fundamental comment types:
+ * - DOCUMENTATION: Special documentation comments (JavaDoc, JSDoc, KDoc) that use slash-star-star syntax
+ * - STANDARD: All other comments (line comments, block comments, or raw text)
  */
 enum class CommentType
 {
    /**
-    * Single-line comment starting with //
+    * Documentation comment using JavaDoc/JSDoc/KDoc syntax.
+    *
+    * These comments start with slash-star-star and are formatted with special 
+    * JavaDoc-style borders. They are typically used for API documentation.
+    *
+    * Recognized in Java, JavaScript, Kotlin, and other languages.
     */
-   LINE,
+   DOCUMENTATION,
 
    /**
-    * Multi-line block comment (slash-star ... star-slash)
+    * Standard comment using line or block syntax, or raw text.
+    *
+    * This includes:
+    * - Line comments (starting with double-slash)
+    * - Block comments (starting with slash-star)
+    * - Selected raw text without comment markers
+    *
+    * These are formatted with standard flowerbox borders according to user preferences.
     */
-   BLOCK,
-
-   /**
-    * Javadoc comment (slash-star-star ... star-slash)
-    */
-   JAVADOC,
-
-   /**
-    * Inline comment within code (uses dynamic width)
-    */
-   INLINE
+   STANDARD
 }
-

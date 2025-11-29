@@ -142,6 +142,12 @@ class ReformatCommentAction : AnAction() {
    /**
     * Determine the appropriate style based on comment type and settings.
     */
+   /**
+    * Determine the flowerbox style to use based on comment type and user settings.
+    *
+    * - DOCUMENTATION comments always use JavaDoc-style formatting
+    * - STANDARD comments use the user's preferred style from settings
+    */
    private fun determineStyle(
       type: CommentType,
       settings: ClaritasSettings.State
@@ -150,7 +156,7 @@ class ReformatCommentAction : AnAction() {
       val maxWidth = settings.maxLineLength
 
       return when (type) {
-         CommentType.JAVADOC ->
+         CommentType.DOCUMENTATION ->
             FlowerboxStyle(
                borderChar = '*',
                linePrefix = " ** ",
@@ -158,18 +164,7 @@ class ReformatCommentAction : AnAction() {
                useJavadocStyle = true
             )
 
-         CommentType.INLINE ->
-            FlowerboxStyle(
-               borderChar = '*',
-               linePrefix = " ** ",
-               fixedWidth = null, // Dynamic width
-               minWidth = 40,
-               maxWidth = maxWidth,
-               useJavadocStyle = useJavadocStyle
-            )
-
-         CommentType.BLOCK,
-         CommentType.LINE ->
+         CommentType.STANDARD ->
             FlowerboxStyle(
                borderChar = '*',
                linePrefix = " ** ",

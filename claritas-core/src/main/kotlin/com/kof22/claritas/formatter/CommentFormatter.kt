@@ -119,7 +119,7 @@ class CommentFormatter(
    {
       val comment = CommentBlock(
          rawText = rawText,
-         type = com.kof22.claritas.model.CommentType.BLOCK,
+         type = com.kof22.claritas.model.CommentType.STANDARD,
          indentLevel = 0,
          preserveParagraphs = preserveParagraphs
       )
@@ -127,3 +127,4 @@ class CommentFormatter(
       return format(comment).formattedText
    }
 }
+
